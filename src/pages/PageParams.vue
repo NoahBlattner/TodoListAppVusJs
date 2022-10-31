@@ -6,7 +6,7 @@
 
 <script>
 export default {
-  name: 'IndexPage'
+  name: 'PageParams'
 }
 </script>
 
