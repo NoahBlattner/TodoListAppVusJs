@@ -22,7 +22,8 @@
     </q-item-section>
 
     <q-item-section side>
-      <q-btn icon="delete" dense color="negative" @click="confirmerSuprresion(tache.id)"/>
+      <q-btn icon="delete" dense color="negative"
+             @click.stop="requestDelete(tache.id)"/>
     </q-item-section>
 
     <q-separator/>
@@ -41,9 +42,20 @@ export default {
     }
   },
   methods: {
-    ...mapActions('taches', ['toggleTaskState']),
-    confirmerSuppresion (taskId) {
-
+    ...mapActions('taches', ['AC_ToggleTaskState', 'AC_DeleteTask']),
+    requestDelete (taskId) {
+      this.$q.dialog({
+        title: 'Confirm deletion',
+        message: 'Are you sure you want to delete this task ?',
+        cancel: true,
+        ok: 'Delete',
+        persistent: true
+      }).onOk(() => {
+        this.deleteTask(taskId)
+      })
+    },
+    deleteTask (taskId) {
+      this.AC_DeleteTask(taskId)
     }
   }
 }

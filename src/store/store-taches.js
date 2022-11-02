@@ -32,6 +32,9 @@ Les mutations ne peuvent pas être asynchrones !!!
 const mutations = {
   TOGGLE_TASK_STATE (state, payload) {
     state.taches[payload.index].terminee = payload.updates.newState
+  },
+  DELETE_TASK (state, payload) {
+    state.taches = state.taches.filter(el => el.id !== payload)
   }
 }
 /*
@@ -39,11 +42,14 @@ Actions : méthodes du magasin qui font appel aux mutations
 Elles peuvent être asynchrones !
  */
 const actions = {
-  toggleTaskState (context, payload) {
+  AC_ToggleTaskState (context, payload) {
     const index = state.taches.findIndex(el => el.id === payload.id)
     if (index !== -1) {
       context.commit('TOGGLE_TASK_STATE', { index, updates: { newState: !state.taches[index].terminee } })
     }
+  },
+  AC_DeleteTask (context, payload) {
+    context.commit('DELETE_TASK', payload)
   }
 }
 

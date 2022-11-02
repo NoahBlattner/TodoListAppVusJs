@@ -13,7 +13,7 @@
       class="bg-primary"
       show-if-above
       bordered
-      breakpoint="767"
+      :breakpoint="767"
     >
         <q-list dark>
           <q-item-label
