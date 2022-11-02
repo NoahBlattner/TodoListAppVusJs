@@ -31,13 +31,16 @@ Les mutations ne peuvent pas être asynchrones !!!
  */
 const mutations = {
   TOGGLE_TASK_STATE (state, payload) {
-    state.tasks[payload.index].completed = payload.updates.newState
+    state.tasks[payload.index].completed = payload.newState
   },
   DELETE_TASK (state, payload) {
     state.tasks = state.tasks.filter(el => el.id !== payload)
   },
   ADD_TASK (state, payload) {
     state.tasks.push(payload)
+  },
+  UPDATE_TASK (state, payload) {
+    state.tasks[payload.index] = payload.updatedTask
   }
 }
 /*
@@ -48,7 +51,7 @@ const actions = {
   AC_ToggleTaskState (context, payload) {
     const index = state.tasks.findIndex(el => el.id === payload.id)
     if (index !== -1) {
-      context.commit('TOGGLE_TASK_STATE', { index, updates: { newState: !state.tasks[index].completed } })
+      context.commit('TOGGLE_TASK_STATE', { index, newState: !state.tasks[index].completed })
     }
   },
   AC_DeleteTask (context, payload) {
@@ -61,6 +64,12 @@ const actions = {
     }
     payload.id = uId
     context.commit('ADD_TASK', payload)
+  },
+  AC_UpdateTask (context, payload) {
+    const index = state.tasks.findIndex(el => el.id === payload.id)
+    if (index !== -1) {
+      context.commit('UPDATE_TASK', { index, updatedTask: payload })
+    }
   }
 }
 

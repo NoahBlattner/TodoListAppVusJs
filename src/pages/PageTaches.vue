@@ -2,14 +2,14 @@
   <q-page padding>
     <h1>ToDo</h1>
 
-    <q-list bordered>
+    <q-list v-if="tasks.length" bordered>
       <TacheComponent v-for="task in tasks" :key="task.id" :task="task"/>
     </q-list>
 
     <q-page-sticky position="bottom" class="q-mb-lg">
       <q-btn fab icon="add" color="primary" @click="showTaskForm = true"/>
       <q-dialog v-model="showTaskForm" persistent>
-        <FormTache @closeDialog="showTaskForm = false"/>
+        <FormTache @closeDialog="showTaskForm = false" button="Add">Add a task</FormTache>
       </q-dialog>
     </q-page-sticky>
   </q-page>

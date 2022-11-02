@@ -9,7 +9,7 @@
       <q-item-label :class="{'text-barre': task.completed}">{{ task.name }}</q-item-label>
     </q-item-section>
 
-    <q-item-section side>
+    <q-item-section v-if="task.endDate" side>
       <div class="row">
         <div class="column justify-center">
           <q-icon name="event" class="q-mr-xs" size="18px"/>
@@ -22,23 +22,41 @@
     </q-item-section>
 
     <q-item-section side>
+      <q-btn icon="edit" dense color="primary"
+             @click.stop="showUpdateForm = true"/>
+    </q-item-section>
+    <q-item-section side>
       <q-btn icon="delete" dense color="negative"
              @click.stop="requestDelete(task.id)"/>
     </q-item-section>
 
     <q-separator/>
+    <q-dialog
+      v-model="showUpdateForm"
+      persistent
+    >
+      <FormTache @closeDialog="showUpdateForm=false" @fermer="showUpdateForm = false"
+                 :task-to-update="task" button="Update">Update task</FormTache>
+    </q-dialog>
   </q-item>
 </template>
 
 <script>
 import { mapActions } from 'vuex'
+import FormTache from 'components/FormTache'
 
 export default {
   name: 'TacheComponent',
+  components: { FormTache },
   props: {
     task: {
       type: Object,
       required: true
+    }
+  },
+  data () {
+    return {
+      showUpdateForm: false
     }
   },
   methods: {
