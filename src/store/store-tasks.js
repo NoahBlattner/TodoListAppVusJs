@@ -1,26 +1,26 @@
 // State : données du magasin
 const state = {
-  taches: [
+  tasks: [
     {
       id: 1,
-      nom: 'Acheter des oranges',
-      terminee: false,
-      dateFin: '06.06.2020',
-      heureFin: '12:00'
+      name: 'Acheter des oranges',
+      completed: false,
+      endDate: '06.06.2020',
+      endTime: '12:00'
     },
     {
       id: 2,
-      nom: 'Manger des oranges',
-      terminee: false,
-      dateFin: '15.06.2020',
-      heureFin: '22:00'
+      name: 'Manger des oranges',
+      completed: false,
+      endDate: '15.06.2020',
+      endTime: '22:00'
     },
     {
       id: 3,
-      nom: 'Digérer des oranges',
-      terminee: false,
-      dateFin: '16.06.2020',
-      heureFin: '14:00'
+      name: 'Digérer des oranges',
+      completed: false,
+      endDate: '16.06.2020',
+      endTime: '14:00'
     }
   ]
 }
@@ -31,10 +31,13 @@ Les mutations ne peuvent pas être asynchrones !!!
  */
 const mutations = {
   TOGGLE_TASK_STATE (state, payload) {
-    state.taches[payload.index].terminee = payload.updates.newState
+    state.tasks[payload.index].completed = payload.updates.newState
   },
   DELETE_TASK (state, payload) {
-    state.taches = state.taches.filter(el => el.id !== payload)
+    state.tasks = state.tasks.filter(el => el.id !== payload)
+  },
+  ADD_TASK (state, payload) {
+    state.tasks.push(payload)
   }
 }
 /*
@@ -43,13 +46,21 @@ Elles peuvent être asynchrones !
  */
 const actions = {
   AC_ToggleTaskState (context, payload) {
-    const index = state.taches.findIndex(el => el.id === payload.id)
+    const index = state.tasks.findIndex(el => el.id === payload.id)
     if (index !== -1) {
-      context.commit('TOGGLE_TASK_STATE', { index, updates: { newState: !state.taches[index].terminee } })
+      context.commit('TOGGLE_TASK_STATE', { index, updates: { newState: !state.tasks[index].completed } })
     }
   },
   AC_DeleteTask (context, payload) {
     context.commit('DELETE_TASK', payload)
+  },
+  AC_AddTask (context, payload) {
+    let uId = -1
+    if (state.tasks.length) {
+      uId = Math.max(...state.tasks.map(task => task.id)) + 1
+    }
+    payload.id = uId
+    context.commit('ADD_TASK', payload)
   }
 }
 
@@ -59,8 +70,8 @@ Fonctionne comme les propriétés calculées
 Sert à calculer, trier, filtrer ou formater les donneés
  */
 const getters = {
-  taches: function (state) {
-    return state.taches
+  tasks: function (state) {
+    return state.tasks
   }
 }
 

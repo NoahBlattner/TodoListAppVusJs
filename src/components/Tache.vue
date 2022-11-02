@@ -1,12 +1,12 @@
 <template>
-  <q-item v-ripple :class="tache.terminee ? 'bg-orange-1' : 'bg-green-1'"
-          clickable @click="toggleTaskState(tache)">
+  <q-item v-ripple :class="task.completed ? 'bg-orange-1' : 'bg-green-1'"
+          clickable @click="AC_ToggleTaskState(task)">
     <q-item-section side>
-      <q-checkbox class="no-pointer-events" :model-value="tache.terminee"/>
+      <q-checkbox class="no-pointer-events" :model-value="task.completed"/>
     </q-item-section>
 
     <q-item-section>
-      <q-item-label :class="{'text-barre': tache.terminee}">{{ tache.nom }}</q-item-label>
+      <q-item-label :class="{'text-barre': task.completed}">{{ task.name }}</q-item-label>
     </q-item-section>
 
     <q-item-section side>
@@ -15,15 +15,15 @@
           <q-icon name="event" class="q-mr-xs" size="18px"/>
         </div>
         <div class="column">
-          <q-item-label class="text-right" caption>{{ tache.dateFin }}</q-item-label>
-          <q-item-label class="text-right" caption>{{ tache.heureFin }}</q-item-label>
+          <q-item-label class="text-right" caption>{{ task.endDate }}</q-item-label>
+          <q-item-label class="text-right" caption>{{ task.endTime }}</q-item-label>
         </div>
       </div>
     </q-item-section>
 
     <q-item-section side>
       <q-btn icon="delete" dense color="negative"
-             @click.stop="requestDelete(tache.id)"/>
+             @click.stop="requestDelete(task.id)"/>
     </q-item-section>
 
     <q-separator/>
@@ -36,13 +36,13 @@ import { mapActions } from 'vuex'
 export default {
   name: 'TacheComponent',
   props: {
-    tache: {
+    task: {
       type: Object,
       required: true
     }
   },
   methods: {
-    ...mapActions('taches', ['AC_ToggleTaskState', 'AC_DeleteTask']),
+    ...mapActions('tasks', ['AC_ToggleTaskState', 'AC_DeleteTask']),
     requestDelete (taskId) {
       this.$q.dialog({
         title: 'Confirm deletion',
