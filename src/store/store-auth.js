@@ -23,14 +23,11 @@ Actions : méthodes du magasin qui font appel aux mutations.
 Elles peuvent être asynchrones !
  */
 const actions = {
-  AC_SignUpUser (context, payload) {
+  AC_SignUpUser ({ context, dispatch }, payload) {
     console.log(payload)
     api.post('/register', payload)
       .then(function (response) {
-        context.commit('SET_USER', response.data.user)
-        context.commit('SET_TOKEN', response.data.access_token)
-        alert('almost done')
-        this.$router.push('/')
+        dispatch.AC_SetUser(context, response.data)
         alert('done')
       })
       .catch(function (error) {
@@ -38,17 +35,20 @@ const actions = {
         alert(error.response)
       })
   },
-  AC_SignInUser (context, payload) {
+  AC_SignInUser ({ context, dispatch }, payload) {
     api.post('/login', payload)
       .then(function (response) {
-        context.commit('SET_USER', response.data.user)
-        context.commit('SET_TOKEN', response.data.access_token)
-        this.$router.push('/')
+        dispatch.AC_SetUser(context, response.data)
       })
       .catch(function (error) {
         console.log(error.response)
         alert(error.response)
       })
+  },
+  AC_SetUser (context, payload) {
+    context.commit('SET_USER',payload.user)
+    context.commit('SET_TOKEN', payload.access_token)
+    this.$router.push('/')
   }
 }
 
