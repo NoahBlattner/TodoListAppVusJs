@@ -1,4 +1,6 @@
 import { api } from 'boot/axios'
+import { showErrorMessage } from 'src/functions/error-message'
+import { Loading } from 'quasar'
 // State : données du magasin
 const state = {
   user: null,
@@ -25,30 +27,36 @@ Elles peuvent être asynchrones !
 const actions = {
   AC_SignUpUser ({ context, dispatch }, payload) {
     console.log(payload)
+    Loading.show()
     api.post('/register', payload)
       .then(function (response) {
-        dispatch.AC_SetUser(context, response.data)
-        alert('done')
+        console.log(response)
+        dispatch('AC_SetUser', response)
       })
       .catch(function (error) {
-        console.log(error.response)
-        alert(error.response)
+        Loading.hide()
+        showErrorMessage('Sign up failed !', Object.values(error.response.data))
+        throw error
       })
   },
   AC_SignInUser ({ context, dispatch }, payload) {
+    Loading.show()
     api.post('/login', payload)
       .then(function (response) {
-        dispatch.AC_SetUser(context, response.data)
+        console.log(response)
+        dispatch('AC_SetUser', response)
       })
       .catch(function (error) {
-        console.log(error.response)
-        alert(error.response)
+        Loading.hide()
+        showErrorMessage('Login failed !', Object.values((error)))
+        throw error
       })
   },
   AC_SetUser (context, payload) {
-    context.commit('SET_USER',payload.user)
+    context.commit('SET_USER', payload.user)
     context.commit('SET_TOKEN', payload.access_token)
     this.$router.push('/')
+    Loading.hide()
   }
 }
 
