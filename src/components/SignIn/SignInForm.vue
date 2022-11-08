@@ -43,7 +43,7 @@ export default {
   methods: {
     ...mapActions('auth', ['AC_SignInUser']),
     submitForm () {
-      alert('To be done !')
+      this.AC_SignInUser(this.form)
     },
     validateEmail (email) {
       // Source : https://stackoverflow.com/questions/46155/how-to-validate-an-email-address-in-javascript

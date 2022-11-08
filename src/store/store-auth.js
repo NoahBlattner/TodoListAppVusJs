@@ -24,15 +24,30 @@ Elles peuvent être asynchrones !
  */
 const actions = {
   AC_SignUpUser (context, payload) {
+    console.log(payload)
     api.post('/register', payload)
       .then(function (response) {
         context.commit('SET_USER', response.data.user)
-        context.commit('SET_TOKEN', response.data.token)
+        context.commit('SET_TOKEN', response.data.access_token)
+        alert('almost done')
+        this.$router.push('/')
+        alert('done')
+      })
+      .catch(function (error) {
+        console.log(error.response)
+        alert(error.response)
+      })
+  },
+  AC_SignInUser (context, payload) {
+    api.post('/login', payload)
+      .then(function (response) {
+        context.commit('SET_USER', response.data.user)
+        context.commit('SET_TOKEN', response.data.access_token)
         this.$router.push('/')
       })
       .catch(function (error) {
-        alert(error)
-        alert('An error occurred. Please check your network connection and try again.')
+        console.log(error.response)
+        alert(error.response)
       })
   }
 }
