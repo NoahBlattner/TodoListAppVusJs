@@ -28,6 +28,8 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
+
 export default {
   name: 'SignInForm',
   data () {
@@ -39,8 +41,9 @@ export default {
     }
   },
   methods: {
+    ...mapActions('auth', ['AC_SignInUser']),
     submitForm () {
-      alert('Form submitted !')
+      alert('To be done !')
     },
     validateEmail (email) {
       // Source : https://stackoverflow.com/questions/46155/how-to-validate-an-email-address-in-javascript

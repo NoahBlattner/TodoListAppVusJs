@@ -49,7 +49,7 @@
 import { mapActions } from 'vuex'
 
 export default {
-  name: 'SignInForm',
+  name: 'SignUpForm',
   data () {
     return {
       form: {
@@ -61,9 +61,9 @@ export default {
     }
   },
   methods: {
-    ...mapActions('auth', ['signUpUser']),
+    ...mapActions('auth', ['AC_SignUpUser']),
     submitForm () {
-      this.signUpUser(this.form)
+      this.AC_SignUpUser(this.form)
     },
     validateEmail (email) {
       // Source : https://stackoverflow.com/questions/46155/how-to-validate-an-email-address-in-javascript

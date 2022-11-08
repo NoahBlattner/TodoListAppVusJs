@@ -16,14 +16,14 @@
       <q-separator />
 
       <q-tab-panels v-model="tab" animated>
-        <q-tab-panel name="connexion">
+        <q-tab-panel name="signIn">
           <div class="text-h6">Sign in</div>
           <sign-in-form/>
         </q-tab-panel>
 
-        <q-tab-panel name="enregistrement">
-          <div class="text-h6">Créer un compte</div>
-          Lorem ipsum dolor sit amet consectetur adipisicing elit.
+        <q-tab-panel name="signUp">
+          <div class="text-h6">Sign up</div>
+          <sign-up-form/>
         </q-tab-panel>
       </q-tab-panels>
     </q-card>
@@ -31,10 +31,12 @@
 </template>
 
 <script>
-import SignInForm from "../components/SignIn/SignInForm";
+import SignInForm from '../components/SignIn/SignInForm'
+import SignUpForm from 'components/SignIn/SignUpForm'
+
 export default {
   name: 'SignInPage',
-  components: {SignInForm},
+  components: { SignUpForm, SignInForm },
   data () {
     return {
       tab: 'signIn'

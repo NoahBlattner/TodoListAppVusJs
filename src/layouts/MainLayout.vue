@@ -14,8 +14,6 @@
         <q-toolbar-title>
           Quasar App
         </q-toolbar-title>
-
-        <q-btn to="/signIn" flat icon-right="account_circle" label="Sign in" class="absolute-right" />
       </q-toolbar>
     </q-header>
 
