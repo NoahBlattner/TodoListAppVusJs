@@ -1,6 +1,6 @@
 import { api } from 'boot/axios'
 import { showErrorMessage } from 'src/functions/error-message'
-import { Loading } from 'quasar'
+import { Loading, LocalStorage } from 'quasar'
 // State : données du magasin
 const state = {
   user: null,
@@ -35,7 +35,8 @@ const actions = {
       })
       .catch(function (error) {
         Loading.hide()
-        showErrorMessage('Sign up failed !', Object.values(error.response.data))
+        // Passer en paramètre error.response.data si existant, sinon un objet vide
+        showErrorMessage('Sign up failed !', Object.values(error?.response?.data ?? {}))
         throw error
       })
   },
@@ -43,18 +44,20 @@ const actions = {
     Loading.show()
     api.post('/login', payload)
       .then(function (response) {
-        console.log(response)
-        dispatch('AC_SetUser', response)
+        dispatch('AC_SetUser', response.data)
       })
       .catch(function (error) {
         Loading.hide()
-        showErrorMessage('Login failed !', Object.values((error)))
+        // Passer en paramètre error.response.data si existant, sinon un objet vide
+        showErrorMessage('Login failed !', Object.values(error?.response?.data ?? {}))
         throw error
       })
   },
   AC_SetUser (context, payload) {
     context.commit('SET_USER', payload.user)
     context.commit('SET_TOKEN', payload.access_token)
+    LocalStorage.set('user', payload.user)
+    LocalStorage.set('token', payload.access_token)
     this.$router.push('/')
     Loading.hide()
   }
