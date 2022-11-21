@@ -7,7 +7,7 @@
           ToDo
         </q-toolbar-title>
 
-        <q-btn to="/signIn" flat icon-right="account_circle" label="Sign in" class="absolute-right" />
+        <q-btn @click="btnClick" flat icon-right="account_circle" :label=" (user) ? 'Sign out' : 'Sign in'" class="absolute-right"/>
       </q-toolbar>
     </q-header>
 
@@ -55,6 +55,8 @@
 
 <script>
 
+import { mapActions, mapGetters } from 'vuex'
+
 export default {
   name: 'MainLayout',
   data () {
@@ -73,6 +75,18 @@ export default {
           path: '/params'
         }
       ]
+    }
+  },
+  computed: {
+    ...mapGetters('auth', ['user'])
+  },
+  methods: {
+    ...mapActions('auth', ['AC_DisconnectUser']),
+    btnClick () {
+      if (this.user) {
+        this.AC_DisconnectUser()
+      }
+      this.$router.push('/signIn')
     }
   }
 }

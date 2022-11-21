@@ -1,4 +1,7 @@
 // State : données du magasin
+import { api } from 'boot/axios'
+import { showErrorMessage } from 'src/functions/error-message'
+
 const state = {
   tasks: [
     {
@@ -22,7 +25,8 @@ const state = {
       endDate: '16.06.2020',
       endTime: '14:00'
     }
-  ]
+  ],
+  tasksLoaded: false
 }
 
 /*
@@ -30,8 +34,8 @@ Mutations : méthode qui manipulent les données
 Les mutations ne peuvent pas être asynchrones !!!
  */
 const mutations = {
-  TOGGLE_TASK_STATE (state, payload) {
-    state.tasks[payload.index].completed = payload.newState
+  TOGGLE_TASK_STATE (state, { index, newState }) {
+    state.tasks[index].completed = newState
   },
   DELETE_TASK (state, payload) {
     state.tasks = state.tasks.filter(el => el.id !== payload)
@@ -41,6 +45,15 @@ const mutations = {
   },
   UPDATE_TASK (state, payload) {
     state.tasks[payload.index] = payload.updatedTask
+  },
+  SET_TASKS (state, payload) {
+    state.tasks = payload
+  },
+  SET_TASKS_LOADED (state, payload) {
+    state.tasksLoaded = payload
+  },
+  CLEAR_TASKS (state) {
+    state.tasks = []
   }
 }
 /*
@@ -48,6 +61,7 @@ Actions : méthodes du magasin qui font appel aux mutations
 Elles peuvent être asynchrones !
  */
 const actions = {
+  // Changer l'état de completion de la tâche
   AC_ToggleTaskState (context, payload) {
     const index = state.tasks.findIndex(el => el.id === payload.id)
     if (index !== -1) {
@@ -70,6 +84,28 @@ const actions = {
     if (index !== -1) {
       context.commit('UPDATE_TASK', { index, updatedTask: payload })
     }
+  },
+  AC_GetTasksAPI (context, payload) {
+    context.commit('SET_TASKS_LOADED', false)
+    const config = {
+      headers: { Authorization: 'Bearer ' + context.rootState.auth.token }
+    }
+    api.get('/taches', config)
+      .then(function (response) {
+        for (const task in response.data) {
+          task.completed = !!task.completed
+        }
+        context.commit('SET_TASKS', response.data)
+        context.commit('SET_TASKS_LOADED', true)
+      })
+      .catch(function (error) {
+        showErrorMessage('An error occurred and your tasks could not be loaded.', Object.values(error?.response?.data ?? {}))
+        throw error
+      })
+  },
+  AC_ClearTasks (context) {
+    context.commit('CLEAR_TASKS')
+    context.commit('SET_TASKS_LOADED', false)
   }
 }
 
@@ -81,6 +117,9 @@ Sert à calculer, trier, filtrer ou formater les donneés
 const getters = {
   tasks: function (state) {
     return state.tasks
+  },
+  tasksLoaded: function (state) {
+    return state.tasksLoaded
   }
 }
 

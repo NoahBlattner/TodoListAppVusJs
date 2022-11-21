@@ -25,13 +25,13 @@ Actions : méthodes du magasin qui font appel aux mutations.
 Elles peuvent être asynchrones !
  */
 const actions = {
-  AC_SignUpUser ({ context, dispatch }, payload) {
+  AC_SignUpUser (context, payload) {
     console.log(payload)
     Loading.show()
     api.post('/register', payload)
       .then(function (response) {
         console.log(response)
-        dispatch('AC_SetUser', response)
+        context.dispatch('AC_SetUser', response)
       })
       .catch(function (error) {
         Loading.hide()
@@ -40,11 +40,11 @@ const actions = {
         throw error
       })
   },
-  AC_SignInUser ({ context, dispatch }, payload) {
+  AC_SignInUser (context, payload) {
     Loading.show()
     api.post('/login', payload)
       .then(function (response) {
-        dispatch('AC_SetUser', response.data)
+        context.dispatch('AC_SetUser', response.data)
       })
       .catch(function (error) {
         Loading.hide()
@@ -54,12 +54,37 @@ const actions = {
       })
   },
   AC_SetUser (context, payload) {
+    // Set user data
     context.commit('SET_USER', payload.user)
     context.commit('SET_TOKEN', payload.access_token)
     LocalStorage.set('user', payload.user)
     LocalStorage.set('token', payload.access_token)
+
+    // Get tasks
+    context.dispatch('tasks/AC_GetTasksAPI', null, { root: true })
+
+    // Reroute to main page
     this.$router.push('/')
     Loading.hide()
+  },
+  AC_DisconnectUser (context) {
+    Loading.show()
+    const config = {
+      headers: { Authorization: 'Bearer ' + state.token }
+    }
+    api.post('/logout', {}, config)
+      .catch(function (error) {
+        showErrorMessage('An error occurred while login out.')
+        throw error
+      })
+      .finally(function () {
+        context.commit('SET_USER', null)
+        context.commit('SET_TOKEN', null)
+        LocalStorage.clear()
+        context.dispatch('tasks/AC_ClearTasks', null, { root: true })
+        this.$router.push('/')
+        Loading.hide()
+      })
   }
 }
 
@@ -69,7 +94,9 @@ Fonctionne comme les propriétés calculées
 Sert à calculer, trier, filtrer ou formater les données
  */
 const getters = {
-
+  user: function (state) {
+    return state.user
+  }
 }
 
 /*

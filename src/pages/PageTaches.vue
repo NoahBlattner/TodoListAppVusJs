@@ -1,10 +1,12 @@
 <template>
   <q-page padding>
-    <h1>ToDo</h1>
-
-    <q-list v-if="tasks.length" bordered>
+    <q-icon v-if="user === null" name="person_off" size="5em" class="absolute-center" @click="$router.push('/signIn')">
+      <q-tooltip>Please log in</q-tooltip>
+    </q-icon>
+    <q-list v-else-if="tasks.length && tasksLoaded" bordered>
       <TacheComponent v-for="task in tasks" :key="task.id" :task="task"/>
     </q-list>
+    <q-spinner-radio v-else class="absolute-center" color="primary" size="5em" />
 
     <q-page-sticky position="bottom" class="q-mb-lg">
       <q-btn fab icon="add" color="primary" @click="showTaskForm = true"/>
@@ -29,7 +31,8 @@ export default {
     }
   },
   computed: {
-    ...mapGetters('tasks', ['tasks'])
+    ...mapGetters('tasks', ['tasks', 'tasksLoaded']),
+    ...mapGetters('auth', ['user'])
   }
 }
 </script>
