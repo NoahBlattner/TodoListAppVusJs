@@ -75,18 +75,25 @@ const actions = {
   AC_AddTask (context, payload) {
     Loading.show()
 
-    // Adapt datatypes
+    // Adapt datatypes and data
     payload.completed = payload.completed ? 1 : 0
+
+    const task = {
+      nom: payload.name,
+      dateFin: payload.endDate,
+      heureFin: payload.endTime,
+      terminee: payload.completed
+    }
 
     const config = {
       headers: { Authorization: 'Bearer ' + context.rootState.auth.token }
     }
-    api.post('/taches', payload, config)
+    api.post('/taches', task, config)
       .then(function (response) {
         context.commit('ADD_TASK', response.data)
       })
       .catch(function (error) {
-        showErrorMessage('Cannot create task !', typeof error.response.data === 'string' ? error.response.data : Object.values(error.response.data))
+        showErrorMessage('Cannot create task !', error?.response?.data ?? {})
         console.log(error.response.data)
         throw error
       })
@@ -98,21 +105,31 @@ const actions = {
       context.commit('UPDATE_TASK', { index, updatedTask: payload })
     }
   },
-  AC_GetTasksAPI (context, payload) {
+  AC_GetTasksAPI (context) {
     context.commit('SET_TASKS_LOADED', false)
     const config = {
       headers: { Authorization: 'Bearer ' + context.rootState.auth.token }
     }
     api.get('/taches', config)
       .then(function (response) {
+        const tasks = []
         for (const task in response.data) {
-          task.completed = !!task.completed
+          // Adapt datatypes and names
+          tasks.push(
+            {
+              id: task.id,
+              name: task.nom,
+              endDate: task.dateFin,
+              endTime: task.heureFin,
+              completed: !!task.terminee
+            }
+          )
         }
         context.commit('SET_TASKS', response.data)
         context.commit('SET_TASKS_LOADED', true)
       })
       .catch(function (error) {
-        showErrorMessage('An error occurred and your tasks could not be loaded.', Object.values(error?.response?.data ?? {}))
+        showErrorMessage('An error occurred and your tasks could not be loaded.', error?.response?.data ?? {})
         throw error
       })
   },
