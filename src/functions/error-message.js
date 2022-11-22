@@ -15,7 +15,7 @@ export function showErrorMessage (message, errors, defaultMessage = 'Unknown err
   }
   // Crée et affiche la boite de dialogue
   Dialog.create({
-    title: 'Erreur', // Titre de la dialog
+    title: 'Error', // Titre de la dialog
     message, // Message de la dialog
     html: true // Html utilisable dans le message
   })

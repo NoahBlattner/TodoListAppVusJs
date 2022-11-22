@@ -64,15 +64,21 @@ export default {
       linkList: [
         {
           id: 0,
-          text: 'Tâches',
+          text: 'Tasks',
           icon: 'list',
           path: '/'
         },
         {
           id: 1,
-          text: 'Parmètres',
+          text: 'Settings',
           icon: 'settings',
           path: '/params'
+        },
+        {
+          id: 2,
+          text: 'Sign in',
+          icon: 'account_circle',
+          path: '/signIn'
         }
       ]
     }
