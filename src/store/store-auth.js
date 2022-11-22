@@ -82,7 +82,6 @@ const actions = {
         context.commit('SET_TOKEN', null)
         LocalStorage.clear()
         context.dispatch('tasks/AC_ClearTasks', null, { root: true })
-        this.$router.push('/')
         Loading.hide()
       })
   }
