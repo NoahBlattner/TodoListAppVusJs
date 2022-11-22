@@ -3,10 +3,13 @@
     <q-icon v-if="user === null" name="person_off" size="5em" class="absolute-center" @click="$router.push('/signIn')">
       <q-tooltip>Please log in</q-tooltip>
     </q-icon>
-    <q-list v-else-if="tasks.length && tasksLoaded" bordered>
+    <q-spinner-radio v-else-if="!tasksLoaded" class="absolute-center" color="primary" size="5em" />
+    <q-list v-else-if="tasks.length" bordered>
       <TacheComponent v-for="task in tasks" :key="task.id" :task="task"/>
     </q-list>
-    <q-spinner-radio v-else class="absolute-center" color="primary" size="5em" />
+    <q-icon v-else name="playlist_remove" size="5em" class="absolute-center">
+      <q-tooltip>No task associated with this user</q-tooltip>
+    </q-icon>
 
     <q-page-sticky position="bottom" class="q-mb-lg">
       <q-btn fab icon="add" color="primary" @click="showTaskForm = true"/>
