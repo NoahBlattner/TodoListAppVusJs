@@ -13,7 +13,8 @@
         <q-input
           outlined
           clearable
-          v-model="task.endDate"
+          readonly
+          :value="endDateDMY"
           label="End Date"
           class="q-mt-sm"
         >
@@ -22,7 +23,7 @@
               <q-popup-proxy ref="qDateProxy" transition-show="scale" transition-hide="scale">
                 <q-date
                   v-model="task.endDate"
-                  mask="D.M.YYYY"
+                  mask="YYYY-MM-DD"
                   @input="() => $refs.qDateProxy.hide()" />
               </q-popup-proxy>
             </q-icon>
@@ -60,6 +61,7 @@
 
 <script>
 import { mapActions } from 'vuex'
+import { date } from 'quasar'
 
 export default {
   name: 'FormTache',
@@ -100,6 +102,12 @@ export default {
         this.AC_AddTask(this.task)
       }
       this.$emit('closeDialog')
+    }
+  },
+  computed: {
+    endDateDMY () {
+      const newDate = new Date(this.task.endDate)
+      return date.formatDate(newDate, 'DD.MM.YY')
     }
   }
 }

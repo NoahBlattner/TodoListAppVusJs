@@ -12,6 +12,8 @@ export function showErrorMessage (message, errors, defaultMessage = 'Unknown err
       message += defaultMessage
     }
     message += '</li></ul>'
+  } else if (typeof errors === 'string') {
+    message += '<ul><li>' + errors + '</li></ul>'
   }
   // Crée et affiche la boite de dialogue
   Dialog.create({

@@ -1,6 +1,7 @@
 // State : données du magasin
 import { api } from 'boot/axios'
 import { showErrorMessage } from 'src/functions/error-message'
+import { Loading } from 'quasar'
 
 const state = {
   tasks: [
@@ -72,12 +73,24 @@ const actions = {
     context.commit('DELETE_TASK', payload)
   },
   AC_AddTask (context, payload) {
-    let uId = -1
-    if (state.tasks.length) {
-      uId = Math.max(...state.tasks.map(task => task.id)) + 1
+    Loading.show()
+
+    // Adapt datatypes
+    payload.completed = payload.completed ? 1 : 0
+
+    const config = {
+      headers: { Authorization: 'Bearer ' + context.rootState.auth.token }
     }
-    payload.id = uId
-    context.commit('ADD_TASK', payload)
+    api.post('/taches', payload, config)
+      .then(function (response) {
+        context.commit('ADD_TASK', response.data)
+      })
+      .catch(function (error) {
+        showErrorMessage('Cannot create task !', typeof error.response.data === 'string' ? error.response.data : Object.values(error.response.data))
+        console.log(error.response.data)
+        throw error
+      })
+    Loading.hide()
   },
   AC_UpdateTask (context, payload) {
     const index = state.tasks.findIndex(el => el.id === payload.id)
