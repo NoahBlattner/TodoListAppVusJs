@@ -4,29 +4,7 @@ import { showErrorMessage } from 'src/functions/error-message'
 import { Loading } from 'quasar'
 
 const state = {
-  tasks: [
-    {
-      id: 1,
-      name: 'Acheter des oranges',
-      completed: false,
-      endDate: '06.06.2020',
-      endTime: '12:00'
-    },
-    {
-      id: 2,
-      name: 'Manger des oranges',
-      completed: false,
-      endDate: '15.06.2020',
-      endTime: '22:00'
-    },
-    {
-      id: 3,
-      name: 'Digérer des oranges',
-      completed: false,
-      endDate: '16.06.2020',
-      endTime: '14:00'
-    }
-  ],
+  tasks: [],
   tasksLoaded: false
 }
 
@@ -76,13 +54,11 @@ const actions = {
     Loading.show()
 
     // Adapt datatypes and data
-    payload.completed = payload.completed ? 1 : 0
-
     const task = {
       nom: payload.name,
       dateFin: payload.endDate,
       heureFin: payload.endTime,
-      terminee: payload.completed
+      terminee: payload.completed ? 1 : 0
     }
 
     const config = {
@@ -113,19 +89,21 @@ const actions = {
     api.get('/taches', config)
       .then(function (response) {
         const tasks = []
-        for (const task in response.data) {
+        console.log(response.data)
+        for (const taskKey in response.data) {
+          const task = response.data[taskKey]
+          console.log(task)
           // Adapt datatypes and names
-          tasks.push(
-            {
-              id: task.id,
-              name: task.nom,
-              endDate: task.dateFin,
-              endTime: task.heureFin,
-              completed: !!task.terminee
-            }
-          )
+          tasks.push({
+            id: task.id,
+            name: task.nom,
+            endDate: task.dateFin,
+            endTime: task.heureFin,
+            completed: !!task.terminee
+          })
         }
-        context.commit('SET_TASKS', response.data)
+        console.log(tasks)
+        context.commit('SET_TASKS', tasks)
         context.commit('SET_TASKS_LOADED', true)
       })
       .catch(function (error) {

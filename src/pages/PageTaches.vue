@@ -1,9 +1,6 @@
 <template>
   <q-page padding>
-    <q-icon v-if="user === null" name="person_off" size="5em" class="absolute-center" @click="$router.push('/signIn')">
-      <q-tooltip>Please log in</q-tooltip>
-    </q-icon>
-    <q-spinner-radio v-else-if="!tasksLoaded" class="absolute-center" color="primary" size="5em" />
+    <q-spinner-radio v-if="!tasksLoaded" class="absolute-center" color="primary" size="5em" />
     <q-list v-else-if="tasks.length" bordered>
       <TacheComponent v-for="task in tasks" :key="task.id" :task="task"/>
     </q-list>
