@@ -1,5 +1,5 @@
 <template>
-  <q-item v-ripple :class="task.completed ? 'bg-orange-1' : 'bg-green-1'"
+  <q-item v-ripple :class="task.completed ? 'bg-green-1' : 'bg-orange-1'"
           clickable @click="AC_ToggleTaskState(task)">
     <q-item-section side>
       <q-checkbox class="no-pointer-events" :model-value="task.completed"/>
