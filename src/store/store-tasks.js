@@ -16,20 +16,20 @@ const mutations = {
   TOGGLE_TASK_STATE (state, { index, newState }) {
     state.tasks[index].completed = newState
   },
-  DELETE_TASK (state, payload) {
-    state.tasks = state.tasks.filter(el => el.id !== payload)
+  DELETE_TASK (state, taskId) {
+    state.tasks = state.tasks.filter(el => el.id !== taskId)
   },
-  ADD_TASK (state, payload) {
-    state.tasks.push(payload)
+  ADD_TASK (state, newTask) {
+    state.tasks.push(newTask)
   },
-  UPDATE_TASK (state, payload) {
-    state.tasks[payload.index] = payload.updatedTask
+  UPDATE_TASK (state, taskToUpdate) {
+    state.tasks[taskToUpdate.index] = taskToUpdate.updatedTask
   },
-  SET_TASKS (state, payload) {
-    state.tasks = payload
+  SET_TASKS (state, task) {
+    state.tasks = task
   },
-  SET_TASKS_LOADED (state, payload) {
-    state.tasksLoaded = payload
+  SET_TASKS_LOADED (state, newLoadedState) {
+    state.tasksLoaded = newLoadedState
   },
   CLEAR_TASKS (state) {
     state.tasks = []
@@ -41,22 +41,34 @@ Elles peuvent être asynchrones !
  */
 const actions = {
   // Changer l'état de completion de la tâche
-  AC_ToggleTaskState (context, payload) {
-    const index = state.tasks.findIndex(el => el.id === payload.id)
+  AC_ToggleTaskState (context, taskToToggle) {
+    const index = state.tasks.findIndex(el => el.id === taskToToggle.id)
     if (index !== -1) {
       context.commit('TOGGLE_TASK_STATE', { index, newState: !state.tasks[index].completed })
     }
   },
-  AC_DeleteTask (context, payload) {
-    context.commit('DELETE_TASK', payload)
+  AC_DeleteTask (context, taskId) {
+    Loading.show()
+    const config = {
+      headers: { Authorization: 'Bearer ' + context.rootState.auth.token }
+    }
+    api.delete('/taches/' + taskId, config)
+      .then(function (response) {
+        context.commit('DELETE_TASK', taskId)
+      })
+      .catch(function (error) {
+        showErrorMessage('Could not delete task !', error?.response?.data ?? {})
+        throw error
+      })
+      .finally(Loading.hide())
   },
-  AC_AddTask (context, payload) {
+  AC_AddTask (context, newTask) {
     Loading.show()
 
     const config = {
       headers: { Authorization: 'Bearer ' + context.rootState.auth.token }
     }
-    api.post('/taches', methods.adaptTaskToApi(payload), config)
+    api.post('/taches', methods.adaptTaskToApi(newTask), config)
       .then(function (response) {
         context.commit('ADD_TASK', methods.adaptTaskToApp(response.data))
       })
@@ -66,13 +78,13 @@ const actions = {
       })
       .finally(Loading.hide())
   },
-  AC_UpdateTask (context, payload) {
+  AC_UpdateTask (context, taskToUpdate) {
     const config = {
       headers: { Authorization: 'Bearer ' + context.rootState.auth.token }
     }
-    api.put('/taches/' + payload.id, methods.adaptTaskToApi(payload), config)
+    api.put('/taches/' + taskToUpdate.id, methods.adaptTaskToApi(taskToUpdate), config)
       .then(function (response) {
-        const index = state.tasks.findIndex(el => el.id === payload.id)
+        const index = state.tasks.findIndex(el => el.id === taskToUpdate.id)
         if (index !== -1) {
           context.commit('UPDATE_TASK', { index, updatedTask: methods.adaptTaskToApp(response.data) })
         }
