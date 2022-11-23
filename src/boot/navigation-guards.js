@@ -15,7 +15,7 @@ export default ({ router }) => {
       if (from.path === '/signIn') {
         showErrorMessage('Access unauthorized ! Please sign in to access this page.')
       }
-      next('/connexion') // Redirige vers /connexion
+      next('/signIn') // Redirige vers /connexion
     } else {
       next() // Continue la navigation normalement
     }
