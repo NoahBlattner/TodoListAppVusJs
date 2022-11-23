@@ -100,6 +100,7 @@ const actions = {
     const config = {
       headers: { Authorization: 'Bearer ' + context.rootState.auth.token }
     }
+    console.log(config)
     api.get('/taches', config)
       .then(function (response) {
         const tasks = []

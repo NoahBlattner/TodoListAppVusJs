@@ -29,7 +29,7 @@ const actions = {
     Loading.show()
     api.post('/register', user)
       .then(function (response) {
-        context.dispatch('AC_SetUser', response)
+        context.dispatch('AC_SetUser', response.data)
       })
       .catch(function (error) {
         Loading.hide()
