@@ -12,11 +12,11 @@ Mutations : méthodes qui manipulent les données
 Les mutations ne peuvent pas être asynchrones !!!
  */
 const mutations = {
-  SET_USER (state, payload) {
-    state.user = payload
+  SET_USER (state, user) {
+    state.user = user
   },
-  SET_TOKEN (state, payload) {
-    state.token = payload
+  SET_TOKEN (state, token) {
+    state.token = token
   }
 }
 
@@ -25,12 +25,10 @@ Actions : méthodes du magasin qui font appel aux mutations.
 Elles peuvent être asynchrones !
  */
 const actions = {
-  AC_SignUpUser (context, payload) {
-    console.log(payload)
+  AC_SignUpUser (context, user) {
     Loading.show()
-    api.post('/register', payload)
+    api.post('/register', user)
       .then(function (response) {
-        console.log(response)
         context.dispatch('AC_SetUser', response)
       })
       .catch(function (error) {
@@ -40,9 +38,9 @@ const actions = {
         throw error
       })
   },
-  AC_SignInUser (context, payload) {
+  AC_SignInUser (context, user) {
     Loading.show()
-    api.post('/login', payload)
+    api.post('/login', user)
       .then(function (response) {
         context.dispatch('AC_SetUser', response.data)
       })
@@ -53,12 +51,12 @@ const actions = {
         throw error
       })
   },
-  AC_SetUser (context, payload) {
+  AC_SetUser (context, user) {
     // Set user data
-    context.commit('SET_USER', payload.user)
-    context.commit('SET_TOKEN', payload.access_token)
-    LocalStorage.set('user', payload.user)
-    LocalStorage.set('token', payload.access_token)
+    context.commit('SET_USER', user.user)
+    context.commit('SET_TOKEN', user.access_token)
+    LocalStorage.set('user', user.user)
+    LocalStorage.set('token', user.access_token)
 
     // Get tasks
     context.dispatch('tasks/AC_GetTasksAPI', null, { root: true })
