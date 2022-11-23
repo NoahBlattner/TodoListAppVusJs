@@ -56,21 +56,32 @@ const actions = {
     const config = {
       headers: { Authorization: 'Bearer ' + context.rootState.auth.token }
     }
-    api.post('/taches', methods.taskAdaptedToApi(payload), config)
+    api.post('/taches', methods.adaptTaskToApi(payload), config)
       .then(function (response) {
-        context.commit('ADD_TASK', methods.taskAdaptedToApp(response.data))
+        context.commit('ADD_TASK', methods.adaptTaskToApp(response.data))
       })
       .catch(function (error) {
         showErrorMessage('Cannot create task !', error?.response?.data ?? {})
         throw error
       })
-    Loading.hide()
+      .finally(Loading.hide())
   },
   AC_UpdateTask (context, payload) {
-    const index = state.tasks.findIndex(el => el.id === payload.id)
-    if (index !== -1) {
-      context.commit('UPDATE_TASK', { index, updatedTask: payload })
+    const config = {
+      headers: { Authorization: 'Bearer ' + context.rootState.auth.token }
     }
+    api.put('/taches/' + payload.id, methods.adaptTaskToApi(payload), config)
+      .then(function (response) {
+        const index = state.tasks.findIndex(el => el.id === payload.id)
+        if (index !== -1) {
+          context.commit('UPDATE_TASK', { index, updatedTask: methods.adaptTaskToApp(response.data) })
+        }
+      })
+      .catch(function (error) {
+        showErrorMessage('Cannot update task !', error?.response?.data ?? {})
+        throw error
+      })
+      .finally(Loading.hide())
   },
   AC_GetTasksAPI (context) {
     context.commit('SET_TASKS_LOADED', false)
@@ -80,10 +91,9 @@ const actions = {
     api.get('/taches', config)
       .then(function (response) {
         const tasks = []
-        console.log((response))
         for (const taskKey in response.data) {
           const task = response.data[taskKey]
-          tasks.push(methods.taskAdaptedToApp(task))
+          tasks.push(methods.adaptTaskToApp(task))
         }
         context.commit('SET_TASKS', tasks)
         context.commit('SET_TASKS_LOADED', true)
@@ -114,7 +124,7 @@ const getters = {
 }
 
 const methods = {
-  taskAdaptedToApi: function (task) {
+  adaptTaskToApi: function (task) {
     return {
       nom: task.name,
       dateFin: task.endDate,
@@ -122,7 +132,7 @@ const methods = {
       terminee: task.completed ? 1 : 0
     }
   },
-  taskAdaptedToApp: function (task) {
+  adaptTaskToApp: function (task) {
     return {
       id: task.id,
       name: task.nom,
