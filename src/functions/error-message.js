@@ -4,23 +4,16 @@ import { Dialog } from 'quasar'
 // Exporte notre fonction
 export function showErrorMessage (message, errors, defaultMessage = 'Unknown error. Please check your network connection.') {
   // Si un tableau d'erreurs est envoyé, crée une liste <ul> avec les erreurs
-  if (typeof errors === 'string') {
-    message += '<ul><li>'
-    if (errors.length) {
-      message += errors + '</li></ul>'
-    } else {
-      message += defaultMessage
-    }
+  message += '<ul><li>'
+  if (errors === null || errors === undefined || errors?.length === 0) {
+    message += defaultMessage
+  } else if (typeof errors === 'string') {
+    message += errors + '</li></ul>'
   } else {
     errors = Object.assign(errors)
-    message += '<ul><li>'
-    if (errors.length) {
-      message += errors.join('</li><li>')
-    } else {
-      message += defaultMessage
-    }
-    message += '</li></ul>'
+    message += errors.join('</li><li>')
   }
+  message += '</li></ul>'
 
   // Crée et affiche la boite de dialogue
   Dialog.create({

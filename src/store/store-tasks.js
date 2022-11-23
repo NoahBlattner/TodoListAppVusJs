@@ -53,24 +53,15 @@ const actions = {
   AC_AddTask (context, payload) {
     Loading.show()
 
-    // Adapt datatypes and data
-    const task = {
-      nom: payload.name,
-      dateFin: payload.endDate,
-      heureFin: payload.endTime,
-      terminee: payload.completed ? 1 : 0
-    }
-
     const config = {
       headers: { Authorization: 'Bearer ' + context.rootState.auth.token }
     }
-    api.post('/taches', task, config)
+    api.post('/taches', methods.taskAdaptedToApi(payload), config)
       .then(function (response) {
-        context.commit('ADD_TASK', response.data)
+        context.commit('ADD_TASK', methods.taskAdaptedToApp(response.data))
       })
       .catch(function (error) {
         showErrorMessage('Cannot create task !', error?.response?.data ?? {})
-        console.log(error.response.data)
         throw error
       })
     Loading.hide()
@@ -89,20 +80,11 @@ const actions = {
     api.get('/taches', config)
       .then(function (response) {
         const tasks = []
-        console.log(response.data)
+        console.log((response))
         for (const taskKey in response.data) {
           const task = response.data[taskKey]
-          console.log(task)
-          // Adapt datatypes and names
-          tasks.push({
-            id: task.id,
-            name: task.nom,
-            endDate: task.dateFin,
-            endTime: task.heureFin,
-            completed: !!task.terminee
-          })
+          tasks.push(methods.taskAdaptedToApp(task))
         }
-        console.log(tasks)
         context.commit('SET_TASKS', tasks)
         context.commit('SET_TASKS_LOADED', true)
       })
@@ -128,6 +110,26 @@ const getters = {
   },
   tasksLoaded: function (state) {
     return state.tasksLoaded
+  }
+}
+
+const methods = {
+  taskAdaptedToApi: function (task) {
+    return {
+      nom: task.name,
+      dateFin: task.endDate,
+      heureFin: task.endTime,
+      terminee: task.completed ? 1 : 0
+    }
+  },
+  taskAdaptedToApp: function (task) {
+    return {
+      id: task.id,
+      name: task.nom,
+      endDate: task.dateFin,
+      endTime: task.heureFin,
+      completed: !!task.terminee
+    }
   }
 }
 
