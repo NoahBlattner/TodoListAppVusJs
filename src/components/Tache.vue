@@ -32,8 +32,7 @@
 
     <q-separator/>
     <q-dialog
-      v-model="showUpdateForm"
-      persistent
+      v-model="showUpdateForm"d
     >
       <FormTache @closeDialog="showUpdateForm=false" @fermer="showUpdateForm = false"
                  :task-to-update="task" button="Update">Update task</FormTache>

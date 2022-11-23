@@ -1,14 +1,14 @@
 <template>
   <q-page padding>
-    <q-spinner-radio v-if="!tasksLoaded" class="absolute-center" color="primary" size="5em" />
-    <q-pull-to-refresh v-else-if="tasks.length" @refresh="refresh">
-      <q-list bordered>
+    <q-pull-to-refresh @refresh="refresh" class="absolute-full">
+      <q-spinner-radio v-if="!tasksLoaded" color="primary" size="5em" class="absolute-center"/>
+      <q-list v-else-if="tasks.length" bordered class="q-ma-lg">
         <TacheComponent v-for="task in tasks" :key="task.id" :task="task"/>
       </q-list>
+      <q-icon v-else name="playlist_remove" size="5em" class="absolute-center">
+        <q-tooltip>No task associated with this user</q-tooltip>
+      </q-icon>
     </q-pull-to-refresh>
-    <q-icon v-else name="playlist_remove" size="5em" class="absolute-center">
-      <q-tooltip>No task associated with this user</q-tooltip>
-    </q-icon>
 
     <q-page-sticky position="bottom" class="q-mb-lg">
       <q-btn fab icon="add" color="primary" @click="showTaskForm = true"/>
