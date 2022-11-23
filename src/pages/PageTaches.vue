@@ -1,9 +1,11 @@
 <template>
   <q-page padding>
     <q-spinner-radio v-if="!tasksLoaded" class="absolute-center" color="primary" size="5em" />
-    <q-list v-else-if="tasks.length" bordered>
-      <TacheComponent v-for="task in tasks" :key="task.id" :task="task"/>
-    </q-list>
+    <q-pull-to-refresh v-else-if="tasks.length" @refresh="refresh">
+      <q-list bordered>
+        <TacheComponent v-for="task in tasks" :key="task.id" :task="task"/>
+      </q-list>
+    </q-pull-to-refresh>
     <q-icon v-else name="playlist_remove" size="5em" class="absolute-center">
       <q-tooltip>No task associated with this user</q-tooltip>
     </q-icon>
@@ -18,7 +20,7 @@
 </template>
 
 <script>
-import { mapGetters } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 import TacheComponent from 'components/Tache'
 import FormTache from 'components/FormTache'
 
@@ -28,6 +30,13 @@ export default {
   data () {
     return {
       showTaskForm: false
+    }
+  },
+  methods: {
+    ...mapActions('tasks', ['AC_GetTasksAPI']),
+    refresh (done) {
+      this.AC_GetTasksAPI()
+      done()
     }
   },
   computed: {
